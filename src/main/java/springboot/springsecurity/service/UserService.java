@@ -1,6 +1,7 @@
 package springboot.springsecurity.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import springboot.springsecurity.domain.UserDto;
 import springboot.springsecurity.domain.UserJoinRequest;
@@ -14,6 +15,7 @@ import springboot.springsecurity.repository.UserJpaRepository;
 public class UserService {
 
     private final UserJpaRepository userJpaRepository;
+    private final BCryptPasswordEncoder encoder;
 
     public UserDto join(UserJoinRequest request) {
         //비즈니스 로직 - 회원가입
@@ -27,7 +29,8 @@ public class UserService {
                 });
 
         //회원가입 save()
-        User saveUser = userJpaRepository.save(request.toEntity());
+        String passwordEncode = encoder.encode(request.getPassword());
+        User saveUser = userJpaRepository.save(request.toEntity(passwordEncode));
 
         return UserDto.builder()
                 .id(saveUser.getId())
