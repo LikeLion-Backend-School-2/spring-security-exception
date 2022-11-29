@@ -1,4 +1,4 @@
-package springboot.springsecurity.domain;
+package springboot.springsecurity.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

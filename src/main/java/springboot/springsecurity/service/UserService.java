@@ -1,14 +1,16 @@
 package springboot.springsecurity.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import springboot.springsecurity.domain.UserDto;
-import springboot.springsecurity.domain.UserJoinRequest;
+import springboot.springsecurity.domain.dto.UserDto;
+import springboot.springsecurity.domain.dto.UserJoinRequest;
 import springboot.springsecurity.domain.entity.User;
 import springboot.springsecurity.exception.ErrorCode;
 import springboot.springsecurity.exception.HospitalReviewException;
 import springboot.springsecurity.repository.UserJpaRepository;
+import springboot.springsecurity.util.JwtUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,9 @@ public class UserService {
 
     private final UserJpaRepository userJpaRepository;
     private final BCryptPasswordEncoder encoder;
+    @Value("${jwt.token.secret}")
+    private String secretKey;
+    private long expireTimeMs = 1000 * 60 * 60;//시간
 
     public UserDto join(UserJoinRequest request) {
         //비즈니스 로직 - 회원가입
@@ -39,4 +44,17 @@ public class UserService {
                 .build();
     }
 
+    public String login(String username, String password) {
+        //username 확인
+        User user = userJpaRepository.findByUsername(username)
+                .orElseThrow(() -> new HospitalReviewException(ErrorCode.NOT_FOUND, String.format("%s", "가입된 유저가 아닙니다")));
+
+        //password 일치 확인
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new HospitalReviewException(ErrorCode.INVALID_PASSWORD, String.format("%s", "아이디 또는 비밀번호가 일치하지 않습니다"));
+        }
+
+        //일치하면 로그인 토큰 반환
+        return JwtUtil.createToken(username, secretKey, expireTimeMs);
+    }
 }
