@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import springboot.springsecurity.domain.UserRole;
 import springboot.springsecurity.domain.entity.User;
 
 @AllArgsConstructor
@@ -22,6 +23,7 @@ public class UserJoinRequest {
                 .username(this.username)
                 .password(password)
                 .emailAddress(this.emailAddress)
+                .role(UserRole.USER)
                 .build();
     }
 

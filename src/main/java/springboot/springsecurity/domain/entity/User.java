@@ -1,6 +1,7 @@
 package springboot.springsecurity.domain.entity;
 
 import lombok.*;
+import springboot.springsecurity.domain.UserRole;
 
 import javax.persistence.*;
 
@@ -24,5 +25,8 @@ public class User {
 
     @Column(name = "email_address")
     private String emailAddress;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
 }
