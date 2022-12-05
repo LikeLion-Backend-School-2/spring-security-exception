@@ -57,4 +57,9 @@ public class UserService {
         //일치하면 로그인 토큰 반환
         return JwtUtil.createToken(username, secretKey, expireTimeMs);
     }
+
+    public User getUserByUserName(String userName) {
+        return userJpaRepository.findByUsername(userName)
+                .orElseThrow(() -> new HospitalReviewException(ErrorCode.NOT_FOUND, ""));
+    }
 }
