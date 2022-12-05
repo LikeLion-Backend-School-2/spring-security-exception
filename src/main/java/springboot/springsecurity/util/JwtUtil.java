@@ -9,7 +9,11 @@ import java.util.Date;
 public class JwtUtil {
 
     private static Claims extractClaims(String token, String key) {//일종의 map 키:밸류로 되어있다
-        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+        return Jwts
+                .parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public static String getUserName(String token, String key) {

@@ -35,12 +35,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {//입장할 때 마다
         final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         log.info("authorizationHeader:{}", authorizationHeader);
 
-        //토큰만 분리해야한다
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        //토큰만 분리해야한다
         String token;
         try {
             token = authorizationHeader.split(" ")[1];
@@ -60,12 +60,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {//입장할 때 마다
         String userName = JwtUtil.getUserName(token, secretKey);
         log.info("username:{}", userName);
 
-        //userDEtail 가져오기
+        //userDetail 가져오기
         User user = userService.getUserByUserName(userName);
         log.info("userRole:{}", user.getRole());
 
         //문 열어주기, role 바인딩
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority(user.getRole().name())));//권한을 여러개 줄 수 있다   );
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority(user.getRole().name()))); //권한을 여러개 줄 수 있다
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);//권한 부여 (이 문을 통과할 수 있다는 것)
         filterChain.doFilter(request, response);
